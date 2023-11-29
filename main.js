@@ -92,14 +92,6 @@ let itemsCarrito =   document.getElementById("itemsCarrito");
 */
 let botonAgregar = document.querySelectorAll(".boton");
 
-
-/*Evento que detecta cuando se presiona el boton quitar del carrito (basurero) y ejecuta el metodo QuitarStorage
-botonQuitar.forEach(function(boton) {
-    boton.addEventListener('click', function() {
-        QuitarStorage([boton]);
-    });
-});
-*/
 function EventosEliminar() {
     botonQuitar = document.querySelectorAll(".btn-eliminar");
     botonQuitar.forEach(boton => {
@@ -109,6 +101,15 @@ function EventosEliminar() {
     });
 }
 
+
+function confirmarPagar() {
+    const botonPagar = document.querySelectorAll(".btn-pagar");
+    botonPagar.forEach(boton => {
+        boton.addEventListener('click', function () {
+            modificarDatosDelLibro(boton.numSerie);
+        });
+    });
+}
 
 /*  Al momento de cargar la pagina se invoca este metodo/ función.
     Se le traspasa el arreglo que contiene todos los libros ya gregados anteriormente,
@@ -193,17 +194,23 @@ function carrito(librosParaElCarrito){
                                     <p><h2 class="h2Carrito">$${e.precio}</h2</p>
                                 </div>
                                 <div class="selectorCantidad">                                    
-                                        <p><i class="fa-solid fa-minus restaCantidad"></i></p>
-                                        <div class="carritoCantidadItem"><input type="text" value="1" disabled></div>
-                                        <p><i class="fa-solid fa-plus sumaCantidad"></i></p>
+                                        <p><i class="fa-solid fa-minus restaCantidad" id="${e.numSerie}"></i></p>
+                                        <div class="carritoCantidadItem"><input class="valorCantidad" id="inp-${e.numSerie}" type="text" value="1" disabled></div>
+                                        <p><i class="fa-solid fa-plus sumaCantidad" id="${e.numSerie}"></i></p>
                                         <p><i class="fa-solid fa-trash btn-eliminar" id="${e.numSerie}"></i></p>
                                 </div>
                             </div>
                         </section>
                         `;
         itemsCarrito.appendChild(carrito);
-    })
+
+})
+    /*  Llamar a EventosEliminar() desde aquí, después de crear dinámicamente los elementos del carrito me 
+        aseguro que los nuevos elementos tengan los eventos de eliminación asociados a ellos.
+    */
     EventosEliminar();
+    sumaCantidad();
+    restaCantidad();
 }
 
 /*Permite este metodo dejar libros dentro del Storage Local siempre y cuando no existan*/
@@ -238,17 +245,8 @@ function AgregarStorage(){
     })
 }
 
-
-
-/*Evento que detecta cuando se presiona el boton quitar del carrito (basurero) y ejecuta el metodo QuitarStorage
-botonQuitar.forEach(function(boton) {
-    boton.addEventListener('click', function() {
-        QuitarStorage([boton]);
-    });
-});
-*/
 function EventosEliminar() {
-    botonQuitar = document.querySelectorAll(".btn-eliminar");
+    let botonQuitar = document.querySelectorAll(".btn-eliminar");
     botonQuitar.forEach(boton => {
         boton.addEventListener('click', function () {
             QuitarStorage([boton]);
@@ -267,6 +265,59 @@ function QuitarStorage(botonQuitar){;
         } 
     )
 }
+
+function validaStock(numSerie) {
+    let libroEncontrado = libros.find((lib)=>lib.numSerie === numSerie);
+    if (libroEncontrado) {
+        return libroEncontrado.stock;
+    } else {
+        return 0;
+        };
+}
+
+function agregarCantidad(botonAgregar) {
+    botonAgregar.forEach(boton => {
+        if (ValidaLibro(boton.id) !== -1) {
+            let input = document.getElementById(`inp-${boton.id}`);
+            if (input !== null) {
+                if (parseFloat(input.value) < validaStock(boton.id))
+                {input.value = parseFloat(input.value) + 1;}
+            }
+        }
+    });
+}
+
+function sumaCantidad() {
+    let botonAgregar = document.querySelectorAll(".sumaCantidad");
+    botonAgregar.forEach(boton => {
+        boton.addEventListener('click', function () {
+            agregarCantidad([boton]);
+        });
+    });
+}
+
+function disminuyeCantidad(botonDisminuir){;
+    botonDisminuir.forEach(boton => {
+            if (ValidaLibro(boton.id)!==-1){
+                let input = document.getElementById(`inp-${boton.id}`);
+                if (input !== null) {
+                    if(parseFloat(input.value) >1){
+                        input.value = parseFloat(input.value) - 1;
+                    }
+                }
+            }
+        });
+}
+
+function restaCantidad() {
+    let botonDisminuir = document.querySelectorAll(".restaCantidad");
+    botonDisminuir.forEach(boton => {
+        boton.addEventListener('click', function () {
+            disminuyeCantidad([boton]);
+        });
+    });
+}
+
 
 function removerDOMSectionCarrito(IDnumeroSerie){
     const SectionCarro = document.querySelectorAll(".SectionCarro");
