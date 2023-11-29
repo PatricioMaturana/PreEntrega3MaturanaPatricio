@@ -1,3 +1,4 @@
+
 /*Creo la clase Libro para instanciar varios objetos libros, objetos que tendrán como propiedades; el titulo, autor, genero, precio, cantidad, etc.*/
 class Libro{
     constructor(titulo, autor, genero,precio,cantidad,stock, numSerie, imagen){
@@ -91,6 +92,24 @@ let itemsCarrito =   document.getElementById("itemsCarrito");
 */
 let botonAgregar = document.querySelectorAll(".boton");
 
+
+/*Evento que detecta cuando se presiona el boton quitar del carrito (basurero) y ejecuta el metodo QuitarStorage
+botonQuitar.forEach(function(boton) {
+    boton.addEventListener('click', function() {
+        QuitarStorage([boton]);
+    });
+});
+*/
+function EventosEliminar() {
+    botonQuitar = document.querySelectorAll(".btn-eliminar");
+    botonQuitar.forEach(boton => {
+        boton.addEventListener('click', function () {
+            QuitarStorage([boton]);
+        });
+    });
+}
+
+
 /*  Al momento de cargar la pagina se invoca este metodo/ función.
     Se le traspasa el arreglo que contiene todos los libros ya gregados anteriormente,
     De esta manera se creara una tarjeta para cada libro y se agregran al documento.
@@ -139,6 +158,7 @@ function agregarCards(arreglo)
                                 el botón comprar.
                             */
 }
+
 agregarCards(libros); /*Este metodo/ función se ejecuta al iniciar, carga todos los libros ya explicado anteriormente*/
 
 /*  Este evento se activa al momento de presionar el botón buscar libro, hace el llamdo al metodo buscarLibro
@@ -157,6 +177,8 @@ document.getElementById('btnBuscar').addEventListener('click', function() {
     en la pagina index.html. 
  */
 function carrito(librosParaElCarrito){
+        /*Aquí se utiliza para obtener todos los elementos asociados a la clase .btn-eliminar*/
+        let botonQuitar = document.querySelectorAll(".btn-eliminar");
         librosParaElCarrito.forEach(e => {
         const carrito = document.createElement("div");/*Crea un nuevo elemento html y se instancia en el objeto carrito*/
         carrito.innerHTML=  /*  Se crea un estructura HTML dinamica con los atributos que requiero.
@@ -181,21 +203,30 @@ function carrito(librosParaElCarrito){
                         `;
         itemsCarrito.appendChild(carrito);
     })
+    EventosEliminar();
 }
 
-/**/
+/*Permite este metodo dejar libros dentro del Storage Local siempre y cuando no existan*/
 function AgregarStorage(){
-    botonAgregar = document.querySelectorAll(".boton");
-    botonAgregar.forEach(boton=>{
-        boton.onclick =(e)=>{
+    botonAgregar = document.querySelectorAll(".boton"); /*seleccionar todos los elementos en el documento que tienen la clase ".boton"*/
+    botonAgregar.forEach(boton=>{ /*Recorremos todos elementos, obteniendo el numero ID*/
+        boton.onclick =(e)=>{ /*Al hacer click al botón comprar se obtiene su ID luego se busca si existe en los libros
+                                existentes, Si existe, se valida si esta almacenado si no es así, lo agrega.
+                              */
             const numeroSerieLibro = e.currentTarget.id;
             const librosEncontrados = libros.find(libro => libro.numSerie == numeroSerieLibro);
             if (ValidaLibro(numeroSerieLibro)==-1)
             {
-                StorageLibros.push(librosEncontrados);
-                localStorage.setItem("StorageLibros",JSON.stringify(StorageLibros));
-                carrito([librosEncontrados]);
-            }else
+                StorageLibros.push(librosEncontrados);/*Se agrega libro al final del arreglo*/
+                localStorage.setItem("StorageLibros",JSON.stringify(StorageLibros));/*Se agrega el libro con sus atributos
+                                                                                    al local storage del navegador, a través del arreglo
+                                                                                    antes si, se convierte el arreglo en una cadena JSON,
+                                                                                    ya que Local Storage solo permite cadenas de textos.
+                                                                                    */
+                carrito([librosEncontrados]);/*Se muestra, visualiza en el front, en la sección carrito de compra
+                                            los libros*/
+            }else /*Si el libro ya esta almacenado (existe en el carro de compra), entrega un popup, donde expresa
+                    que el libro ya fue agregado*/
             {
                 Swal.fire({
                     icon: "error",
@@ -207,13 +238,23 @@ function AgregarStorage(){
     })
 }
 
-let botonQuitar = document.querySelectorAll(".btn-eliminar");
 
+
+/*Evento que detecta cuando se presiona el boton quitar del carrito (basurero) y ejecuta el metodo QuitarStorage
 botonQuitar.forEach(function(boton) {
     boton.addEventListener('click', function() {
         QuitarStorage([boton]);
     });
 });
+*/
+function EventosEliminar() {
+    botonQuitar = document.querySelectorAll(".btn-eliminar");
+    botonQuitar.forEach(boton => {
+        boton.addEventListener('click', function () {
+            QuitarStorage([boton]);
+        });
+    });
+}
 
 function QuitarStorage(botonQuitar){;
     botonQuitar.forEach(e => {
