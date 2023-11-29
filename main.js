@@ -1,3 +1,4 @@
+/*Creo la clase Libro para instanciar varios objetos libros, objetos que tendrán como propiedades; el titulo, autor, genero, precio, cantidad, etc.*/
 class Libro{
     constructor(titulo, autor, genero,precio,cantidad,stock, numSerie, imagen){
         this.titulo =   titulo;
@@ -11,6 +12,11 @@ class Libro{
     }
 }
 
+/*  Se crean instancias de varios objetos tipo Libro, para agregar a las propiedades de los libros su información requerida
+    La idea de esto es crear una BD de información para agregarlo en un arreglo, que contendra todos los libros.
+    Con la información de este arreglo se mostrara en el FrontEnd del index.html, a través de DOM y se guardara la información
+    en el Local Storage.
+    */
 const nuevoLibro1 = new Libro("El enigma sagrado", "Christian Jacq", "Misterio histórico","40000","0","2","1","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp3JhdENon2YLMvdi4SYTbV49eq6GPdu8HcxWZibeBOCQucvXKzy8QRhx44RUuLR72iJ8&usqp=CAU");
 const nuevoLibro2 = new Libro("La piedra de luz", "Christian Jacq", "Novela histórica","50000","0","3","2","https://m.media-amazon.com/images/I/51LJ7u9wa5L._SL500_.jpg");
 const nuevoLibro3 = new Libro("Ramsés: El hijo de la luz", "Christian Jacq", "Novela histórica","30000","0","4","3","https://www.greenlibros.com/cdn/shop/products/e0454a12-60c8-40c0-84a0-81a2c7dde50c-53_19420366_0_christianjacqramsselhijodelalu_1024x1024.jpg?v=1688153410");
@@ -54,7 +60,12 @@ const nuevoLibro40 = new Libro("Las uvas de la ira", "John Steinbeck", "Ficción
 const nuevoLibro41 = new Libro("Harry Potter y la piedra filosofal", "J.K. Rowling", "Fantasía juvenil", "38000","0", "11", "41", "https://falabella.scene7.com/is/image/Falabella/gsc_116306931_1439313_1?wid=1500&hei=1500&qlt=70");
 const libros       = [nuevoLibro1,nuevoLibro2,nuevoLibro3,nuevoLibro4,nuevoLibro5,nuevoLibro6,nuevoLibro7,nuevoLibro8,nuevoLibro9,nuevoLibro10, nuevoLibro11, nuevoLibro12, nuevoLibro13,nuevoLibro14,nuevoLibro15,nuevoLibro16,nuevoLibro17,nuevoLibro18,nuevoLibro19,nuevoLibro20,nuevoLibro21,nuevoLibro22, nuevoLibro23, nuevoLibro24, nuevoLibro25,nuevoLibro26,nuevoLibro27,nuevoLibro28,nuevoLibro29,nuevoLibro30,nuevoLibro31,nuevoLibro32,nuevoLibro33,nuevoLibro34, nuevoLibro35, nuevoLibro36, nuevoLibro37,nuevoLibro38,nuevoLibro39,nuevoLibro40,nuevoLibro41];
 
-//console.table(libros);
+/*
+    Con estás lineas de código obtenemos información del Local Storage, si existe se almacena es un arreglo, de lo contrario
+    El arreglo se deja vacio.
+    El objetivo a conseguir que una vez recuperada la información de Local Storage esta se deje en el carro de compra.
+    En resumen de almacen los libros en Local Storage, libros que se quieren comprar.
+    */
 let StorageLibros
 let StorageLibrosLS = localStorage.getItem("StorageLibros");
 if (StorageLibrosLS)
@@ -66,18 +77,35 @@ else
     StorageLibros=[];
 }
 
+/*  Con estás lineas de código se obtiene elementos del DOM*/
+
+/*  Aquí especificamente se mostraran las tarjetas de cada Libro*/
 let cardGroup =   document.getElementById("card-group");
+
+/*  Aquí se mostraran los libros que se llevan al carro de compra*/
 let itemsCarrito =   document.getElementById("itemsCarrito");
+
+/*  Aquí se utiliza para obtener todos los elementos asociados a la clase boton,
+    Cada libro tiene asociado un botón de compra, a través de el ID del boton se puede identificar el libro.
+    De esta manera cuando le hagan click al botón comprar podremos saber que libro es y se agregara al carro de compra.
+*/
 let botonAgregar = document.querySelectorAll(".boton");
 
+/*  Al momento de cargar la pagina se invoca este metodo/ función.
+    Se le traspasa el arreglo que contiene todos los libros ya gregados anteriormente,
+    De esta manera se creara una tarjeta para cada libro y se agregran al documento.
+*/
 function agregarCards(arreglo)
 {
     let i=1;
     arreglo.forEach(e => {
-        const card = document.createElement("div");
-        card.className =  "card";
-        card.id =   e.numSerie;
-        card.innerHTML= 
+        const card = document.createElement("div"); /*Aquí creo un elemento HTML, y se instancia en la constante card*/
+        card.className =  "card"; /*Al elemento HTML <div> le ponemos la clase card (<div class="card">)*/
+        card.id =   e.numSerie;/*al igual que la anterior, ahora se le deja un id el cual contendra el N° de serie del libro */
+        card.innerHTML= /*  Esta se utiliza para crear estructura html de manera dinamica, luego incrustar con 
+                            los atributos requeridos dentro del div padre, esto queda dentro del objeto instanciado
+                            card. En otras palabras estamos creando las tarjetas para cada libro.
+                        */
                         `<div>
                             <div class="row g-0">
                                     <div class="col-md-4">
@@ -98,13 +126,25 @@ function agregarCards(arreglo)
                         </div>
                         `;
         i++;
-        cardGroup.appendChild(card);
+        cardGroup.appendChild(card);/*  Aquí se agrega los elementos que contiene card dentro del objeto cardGroup
+                                        Osea la estructura HTML dinamica construida, queda dentro del 
+                                        <div id="card-group"> padre, aquí se contendrán/visualizaran todas 
+                                        las tarjetas de cada libro. 
+                                    */
     });
-    AgregarStorage();
-    carrito(StorageLibros);
+    AgregarStorage();/* Llamado al metodo que permite agregar libros al local storage al presionar el 
+                        botón comprar.
+                     */
+    carrito(StorageLibros); /*  Llamado al metodo que permite agragar libros al carrito de compra al presionar
+                                el botón comprar.
+                            */
 }
-agregarCards(libros);
+agregarCards(libros); /*Este metodo/ función se ejecuta al iniciar, carga todos los libros ya explicado anteriormente*/
 
+/*  Este evento se activa al momento de presionar el botón buscar libro, hace el llamdo al metodo buscarLibro
+    se le traspasa el valor obtenido del elemento input. pero antes al valor del elemento input se le 
+    quitan los espacios y acentos.
+*/
 document.getElementById('btnBuscar').addEventListener('click', function() {
     // Obtén el valor del input
     let datoIngresado = document.getElementById('buscaLibro').value;
@@ -112,11 +152,16 @@ document.getElementById('btnBuscar').addEventListener('click', function() {
     buscarLibro(datoIngresado);
 });
 
+/*
+    Este metodo recibe un arreglo con el o los libros que se deben agregar a la sección carrito de compra
+    en la pagina index.html. 
+ */
 function carrito(librosParaElCarrito){
-        /*Carga libros, agregados al carrito; los cuales estaban guardados en el almacen local (Local Storage) */
         librosParaElCarrito.forEach(e => {
-        const carrito = document.createElement("div");
-        carrito.innerHTML=
+        const carrito = document.createElement("div");/*Crea un nuevo elemento html y se instancia en el objeto carrito*/
+        carrito.innerHTML=  /*  Se crea un estructura HTML dinamica con los atributos que requiero.
+                                esto representara/ contendra en el frontEnd los libros que se agregaran al carrito 
+                            */
                         `
                         <section class= "SectionCarro">
                             <div class="CarritoDetalle">
@@ -138,6 +183,7 @@ function carrito(librosParaElCarrito){
     })
 }
 
+/**/
 function AgregarStorage(){
     botonAgregar = document.querySelectorAll(".boton");
     botonAgregar.forEach(boton=>{
