@@ -403,6 +403,8 @@ function sumatotal(){
 
 document.getElementById('id-btnPagar').addEventListener('click', function() {
     limpiarCarrito();
+      //Se muestra por pantalla mensaje a través de libreria Swal.fire 
+    alertaPopUp("success", "Gracias por confirmar el pago", "Se limpiara el carrito para reiniciar el ejercicio.");
 });
 
 function limpiarCarrito() {
